@@ -1,27 +1,41 @@
-# Cüzdan Servisi (wallet-service)
+# wallet-service
 
-Java 21, Spring Boot, Hibernate/JPA, PostgreSQL ve Flyway ile yazılmış bir cüzdan/para transferi servisi.
-Her gün bir özellik ekleniyor; konular (transaction, kilit, N+1, Kafka, Redis, güvenlik) o özelliğin ihtiyacından çıkıyor.
+A digital wallet REST service built with Java 21, Spring Boot 3, JPA/Hibernate, PostgreSQL and Flyway.
+Features are added incrementally, and each one is driven by a real backend concern:
+transactions, locking, N+1 queries, Kafka, Redis and security.
 
-## Çalıştırma
+## Tech stack
+
+- Java 21, Spring Boot 3.5
+- Spring Data JPA / Hibernate
+- PostgreSQL 16 (Docker), Flyway migrations
+- JUnit 5
+
+## Getting started
 
 ```bash
-docker compose up -d postgres     # PostgreSQL 16, localhost:5432
-./mvnw test                       # ya da: mvn test
-./mvnw spring-boot:run            # ya da: mvn spring-boot:run
+docker compose up -d postgres     # PostgreSQL 16 on localhost:5432
+mvn test
+mvn spring-boot:run
 ```
 
-## Hesap açma
+## API
+
+### Open an account
 
 ```bash
 curl -i -X POST localhost:8080/api/accounts \
   -H 'Content-Type: application/json' \
-  -d '{"ownerName":"Özge","currency":"EUR","initialBalance":1000}'
+  -d '{"ownerName":"Alice","currency":"EUR","initialBalance":1000}'
+```
 
+### Get an account
+
+```bash
 curl -i localhost:8080/api/accounts/1
 ```
 
-## Transfer (Gün 1'den sonra çalışır)
+### Transfer money (work in progress)
 
 ```bash
 curl -i -X POST localhost:8080/api/transfers \
@@ -29,12 +43,12 @@ curl -i -X POST localhost:8080/api/transfers \
   -d '{"fromAccountId":1,"toAccountId":2,"amount":10}'
 ```
 
-## Yapı
+## Project structure
 
 ```
-account/    Account (entity), AccountRepository, AccountService, AccountController
-transfer/   TransferService (Gün 1: kilitler), TransferController
-common/     Exception'lar ve hata cevapları (ProblemDetail)
-db/migration/postgresql   Çalışan Flyway migration'ları
-db/migration/oracle       Aynı şemanın Oracle karşılığı (sadece karşılaştırma için)
+account/                  Account entity, repository, service and controller
+transfer/                 Transfer service and controller
+common/                   Exceptions and error responses (ProblemDetail)
+db/migration/postgresql   Flyway migrations used by the application
+db/migration/oracle       Oracle equivalent of the same schema, kept for comparison
 ```
