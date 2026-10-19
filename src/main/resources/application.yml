@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: wallet-service
+  datasource:
+    url: jdbc:postgresql://localhost:5432/wallet
+    username: wallet
+    password: wallet
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: none              # Şemayı Hibernate değil Flyway kurar (db/migration).
+    properties:
+      hibernate:
+        format_sql: true
+  flyway:
+    # {vendor} çalışma anında veritabanı adıyla değişir: postgresql -> db/migration/postgresql
+    locations: classpath:db/migration/{vendor}
+
+logging:
+  level:
+    org.hibernate.SQL: debug      # Hibernate'in ürettiği SQL'i konsolda gör (Gün 0 görevi)
